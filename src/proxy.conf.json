@@ -1,0 +1,9 @@
+{
+    "/fakeApi": {
+        "target": "https://172.16.16.122:7155",
+        "secure": false,
+        "pathRewrite": {
+            "^/fakeApi": ""
+        }
+    }
+}

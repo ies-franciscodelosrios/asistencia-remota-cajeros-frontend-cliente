@@ -1,1 +1,68 @@
 /* You can add global styles to this file, and also import other style files */
+
+:root {
+    --pink: green;
+    --animation-curve: cubic-bezier(0.12, 0.7, 0.74, 0.71);
+  }
+  
+  * {
+    box-sizing: border-box;
+  }
+  
+  body {
+    height: 100vh;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .phone {
+    z-index: 9999;
+    background-color: var(--pink);
+    animation: phone 1s var(--animation-curve) infinite alternate-reverse;
+    margin-top:20%;
+    margin-left: 50%;
+    display: grid;
+    position: relative;
+    justify-content: center;
+    align-items: center;
+    border: 0.5px white solid;
+  }
+  
+  .material-icons {
+    color: white;
+  }
+  
+  #div {
+    height: 40px;
+    width: 40px;
+    border-radius: 50%;
+    background-color: red;
+    position: absolute;
+    animation: scaling 2s var(--animation-curve) infinite;
+  }
+  
+  @keyframes scaling {
+    0% {
+      transform: scale(4);
+      background-color: var(--pink);
+    }
+    100% {
+      transform: scale(10);
+      background-color: rgba(245, 0, 182, 0);
+    }
+  }
+  
+  @keyframes phone {
+    0% {
+      transform: scale(4);
+    }
+    100% {
+      transform: scale(4.5);
+    }
+  }
+  .circle1 {
+    animation-delay: 0s;
+  }
+  .circle2 {
+    animation-delay: 1s;
+  }
