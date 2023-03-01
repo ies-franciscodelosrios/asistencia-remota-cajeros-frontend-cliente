@@ -60,3 +60,13 @@
 #contenedor{
 	bottom: 100%;
 }
+
+#streamToast{
+	color: white;
+	background-color: red;
+}
+
+#postToast{
+	color: white;
+	background-color: red;
+}
