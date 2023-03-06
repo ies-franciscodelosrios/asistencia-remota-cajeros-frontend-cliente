@@ -124,20 +124,20 @@ export class AppComponent implements OnInit, OnDestroy {
       UserId:null
     }
     try{
-      await this.callService.stablishCall(call);
-    }catch(err){
-      const postToast = document.getElementById('postToast');
-      const toast = new bootstrap.Toast(postToast);
-      toast.show()
-      console.error(err);
-    }
-    try{
       this.callService.enableCallAnswer();
-    } catch (error) {
+    }catch(error){
       const callToast = document.getElementById('callToast');
       const toast = new bootstrap.Toast(callToast);
       toast.show()
       console.log(error)
+    }
+    try{
+      await this.callService.stablishCall(call);
+    } catch (error) {
+      const postToast = document.getElementById('postToast');
+      const toast = new bootstrap.Toast(postToast);
+      toast.show()
+      console.error(error);
     }
   }
 

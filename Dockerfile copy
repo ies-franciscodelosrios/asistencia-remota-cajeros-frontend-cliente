@@ -1,0 +1,21 @@
+FROM nginx:1.23-alpine
+
+COPY ./nginx.conf /etc/nginx/nginx.conf
+COPY ./dist/proyecto-video-call2 /usr/share/nginx/html
+COPY cajero.cer /etc/ssl/certs/
+COPY cajero.key /etc/ssl/private/
+
+EXPOSE 443
+
+CMD ["nginx", "-g", "daemon off;"]
+
+FROM ubuntu:latest
+RUN apt-get update && apt-get install -y x11vnc xvfb
+RUN apt-get install net-tools
+RUN apt-get install -y xfce4
+RUN mkdir root/.vnc
+COPY x11vnc.cfg root/.vnc/x11vnc.cfg
+RUN x11vnc -storepasswd password root/.vnc/passwd
+
+EXPOSE 4200 5900
+#CMD ["x11vnc", "-forever", "-usepw", "-config /root/.vnc/x11vnc.cfg"]
