@@ -23,7 +23,12 @@ call:Call;
       UserId:call.UserId
       
     }
-    return this.http.post<Call>(`${environment.serverURL}/api/Call`,data);
+    return this.http.post<Call>(`${environment.serverURL}/api/Call`,data,{
+      headers: { "Access-Control-Allow-Headers": "*", // this will allow all CORS requests
+      "Access-Control-Allow-Origin":"*",
+      "Access-Control-Allow-Methods": 'OPTIONS,POST,GET', // this states the allowed methods
+      "Content-Type": "application/json" }
+    });
   }
 
   public getAllCalls():Observable<Call[]>{
