@@ -95,14 +95,17 @@ export class CallService {
             //coge la webcam y el microfono del navegador
             const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
             this.localStreamBs.next(stream);
+            console.log("HACIENDO LLAMADA");
 
             this.peer.on('call', async (call) => {
 
                 //inicia la llamada
                 this.mediaCall = call;
+                console.log("ANTES DE COGER LA LLAMADA")
                 //muestra la camara y el sonido del equipo remoto
                 this.mediaCall.answer(stream);
                 this.mediaCall.on('stream', (remoteStream) => {
+                    console.log("DENTRO DE LA LLAMADA")
                     this.stateCalling.next(2);  //descolgar
                     this.remoteStreamBs.next(remoteStream);
                 });
