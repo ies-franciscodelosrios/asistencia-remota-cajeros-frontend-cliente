@@ -55,7 +55,7 @@ export class CallService {
         if (!this.peer || this.peer.disconnected) {
             const peerJsOptions: peerjs.PeerJSOption = {
                 debug: 3,
-                config: {
+                config:  {
                     iceServers: [
                         {
                             urls: [
