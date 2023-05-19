@@ -5,6 +5,8 @@ import { Call } from './model/call/Call';
 import { Estado } from './model/call/Enum_call';
 import {  Observable, Subscription } from 'rxjs';
 import { environment } from 'src/environments/environment';
+import { Modal } from "bootstrap";
+
 
 declare var bootstrap:any;
 
@@ -22,6 +24,8 @@ export class AppComponent implements OnInit, OnDestroy {
   @ViewChild('remoteVideo') remoteVideo!: ElementRef<HTMLVideoElement>; //Video remoto
   @ViewChild('iniciar') iniciar!: ElementRef<HTMLButtonElement>;
   @ViewChild('colgar') colgar!: ElementRef<HTMLButtonElement>;
+  @ViewChild('staticBackdrop') modal!: any;
+  
 
   public state = 0;
 
@@ -52,7 +56,7 @@ export class AppComponent implements OnInit, OnDestroy {
             break;
           case 1:
             this.state=state;
-            console.log("ESTADO LLAMANDO")
+            console.log("ESTADO LLAMANDO");
             //poner la animación verde y cancelar
             break;
           case 2:
@@ -108,6 +112,50 @@ export class AppComponent implements OnInit, OnDestroy {
 
   }
 
+  public openQeue(){
+    const element = document.getElementById('rateModal') as HTMLElement;
+    const myModal = new Modal(element);
+    myModal.show();
+  }
+
+  public highlightStars(){
+    // Obtener todas las imágenes de estrella
+    const stars = document.querySelectorAll('.star');
+
+    // Agregar un controlador de eventos a cada imagen de estrella
+    stars.forEach(star => {
+      star.addEventListener('mouseover', function() {
+        // Obtener el id de la estrella actual
+        const currentStarId = this.id;
+        
+        // Obtener el número de estrella actual (extraer el número del id)
+        const currentStarNumber = parseInt(currentStarId.replace('star', ''));
+        
+        // Hacer las estrellas previas más grandes
+        for (let i = 1; i <= currentStarNumber; i++) {
+          const star = document.getElementById(`star${i}`);
+          star.style.setProperty("background-color", " rgb(202, 202, 202)")
+          star.style.setProperty('scale','1.3');
+          star.style.setProperty('border-radius','15px');
+           // Hacer la estrella más grande
+        }
+        
+        // Hacer las estrellas siguientes más pequeñas
+        for (let i = currentStarNumber + 1; i <= 5; i++) {
+          const star = document.getElementById(`star${i}`);
+          star.style.setProperty('scale','1');
+          star.style.setProperty('background-color','white'); // Restaurar el tamaño original de la estrella
+        }
+      });
+    });
+  }
+
+  public openRate(){
+    const element = document.getElementById('rateModal') as HTMLElement;
+    const myModal = new Modal(element);
+    myModal.show();
+  }
+
   /**
    * Hace una petición post a la API pasandole el id de la llamada y el propio id del cagero.
    * Después ejecuta la función que inicia la llamada pero lo pone a la espera
@@ -144,6 +192,8 @@ export class AppComponent implements OnInit, OnDestroy {
   public async cancelCall(){
     try{
       await this.callService.cancelCall();
+      this.openRate();
+      this.highlightStars();
     } catch (error) {
       const endCallToast = document.getElementById('endCallToast');
         const toast = new bootstrap.Toast(endCallToast);

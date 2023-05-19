@@ -18,7 +18,26 @@
         <video #localVideo id="local-video" autoplay playsinline [muted]=true></video>
       </div>
     </div>
+
+  <!-- Modal -->
+<div class="modal fade" #rateModal id="rateModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="rateModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="rateModalLabel">Valora la llamada</h1>
+        <img src="../assets/icons8-x-48.png" data-bs-dismiss="modal" alt="close">
+      </div>
+      <div class="modal-body d-flex flex-row justify-content-evenly">
+        <img src="../assets/icons8-star-16.png" class="star" id="star1" alt="star1">
+        <img src="../assets/icons8-star-16.png" class="star" id="star2" alt="star2">
+        <img src="../assets/icons8-star-16.png" class="star" id="star3" alt="star3">
+        <img src="../assets/icons8-star-16.png" class="star" id="star4" alt="star4">
+        <img src="../assets/icons8-star-16.png" class="star" id="star5" alt="star5">
+      </div>
+      
+    </div>
   </div>
+</div>
 
   <div class="toast-container position-fixed top-0 end-0 p-3">
     <div id="peerToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">

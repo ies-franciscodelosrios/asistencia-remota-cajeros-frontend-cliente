@@ -1,5 +1,5 @@
 export const environment = {
   production: true,
-  serverURL: "https://172.16.16.122",
+  serverURL: "https://192.168.10.236",
   id_cajero: 1
 };
