@@ -57,6 +57,7 @@ export class AppComponent implements OnInit, OnDestroy {
           case 1:
             this.state=state;
             console.log("ESTADO LLAMANDO");
+            this.openQeue();
             //poner la animación verde y cancelar
             break;
           case 2:
@@ -113,7 +114,7 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   public openQeue(){
-    const element = document.getElementById('rateModal') as HTMLElement;
+    const element = document.getElementById('queueModal') as HTMLElement;
     const myModal = new Modal(element);
     myModal.show();
   }
@@ -137,6 +138,7 @@ export class AppComponent implements OnInit, OnDestroy {
           star.style.setProperty("background-color", " rgb(202, 202, 202)")
           star.style.setProperty('scale','1.3');
           star.style.setProperty('border-radius','15px');
+          star.style.setProperty('cursor','pointer');
            // Hacer la estrella más grande
         }
         

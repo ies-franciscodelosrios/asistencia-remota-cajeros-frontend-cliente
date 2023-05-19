@@ -12,6 +12,19 @@
     z-index: 9999;
   }
 
+  .x{
+    cursor: pointer;
+  }
+
+  #qeueDialog{
+    width: 600px !important;
+    max-width: 900px !important;
+  }
+
+  .mr15{
+    margin-right: 15px;
+  }
+
   body {
     height: 100vh;
     justify-content: center;

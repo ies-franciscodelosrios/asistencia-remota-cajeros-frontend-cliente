@@ -20,24 +20,46 @@
     </div>
 
   <!-- Modal -->
-<div class="modal fade" #rateModal id="rateModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="rateModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h1 class="modal-title fs-5" id="rateModalLabel">Valora la llamada</h1>
-        <img src="../assets/icons8-x-48.png" data-bs-dismiss="modal" alt="close">
+  <div class="modal fade" #rateModal id="rateModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="rateModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="rateModalLabel">Valora la llamada</h1>
+          <img class="x" src="../assets/icons8-x-48.png" data-bs-dismiss="modal" alt="close">
+        </div>
+        <div class="modal-body d-flex flex-row justify-content-evenly">
+          <img src="../assets/icons8-star-16.png" class="star" id="star1" alt="star1" data-bs-dismiss="modal">
+          <img src="../assets/icons8-star-16.png" class="star" id="star2" alt="star2" data-bs-dismiss="modal">
+          <img src="../assets/icons8-star-16.png" class="star" id="star3" alt="star3" data-bs-dismiss="modal">
+          <img src="../assets/icons8-star-16.png" class="star" id="star4" alt="star4" data-bs-dismiss="modal">
+          <img src="../assets/icons8-star-16.png" class="star" id="star5" alt="star5" data-bs-dismiss="modal">
+        </div>
       </div>
-      <div class="modal-body d-flex flex-row justify-content-evenly">
-        <img src="../assets/icons8-star-16.png" class="star" id="star1" alt="star1">
-        <img src="../assets/icons8-star-16.png" class="star" id="star2" alt="star2">
-        <img src="../assets/icons8-star-16.png" class="star" id="star3" alt="star3">
-        <img src="../assets/icons8-star-16.png" class="star" id="star4" alt="star4">
-        <img src="../assets/icons8-star-16.png" class="star" id="star5" alt="star5">
-      </div>
-      
     </div>
   </div>
-</div>
+
+  <div class="modal fade" #queueModal id="queueModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="queueModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" id="qeueDialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="queueModalLabel">Tu posición en la cola</h1>
+          <img class="x" src="../assets/icons8-x-48.png" data-bs-dismiss="modal" alt="close">
+        </div>
+        <div class="modal-body d-flex flex-row justify-content-between align-items-center">
+          <div class="d-flex flex-row align-items-center">
+            <img src="../assets/icons8-clock.gif" width="32px" height="32px" alt="clock">
+            <span class="mr15">Tiempo de espera estimado: </span>
+            <span>2:20 min</span>
+          </div>
+          <div>
+            <img src="../assets/icons8-person-32.png" alt="person">
+            <span class="mr15">Posición en la cola: </span>
+            <span #qeuePosition id="qeuePosition">4</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <div class="toast-container position-fixed top-0 end-0 p-3">
     <div id="peerToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
