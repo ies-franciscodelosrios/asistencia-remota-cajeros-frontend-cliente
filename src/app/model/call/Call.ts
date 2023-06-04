@@ -1,5 +1,6 @@
 import { Cajero } from "./Cajero";
 import { Estado } from "./Enum_call";
+import { Rating } from "./Rating";
 import { User } from "./User";
 
 export interface Call{
@@ -7,7 +8,9 @@ export interface Call{
     p2p:string,
     estado:Estado,
     date:Date,
-    CajeroId:number,
-    UserId?:number|null
-    
+    duration?:number,
+    rating?:Rating,
+    cajeroId:number,
+    userId?:number,
+    formatted?:string
 }

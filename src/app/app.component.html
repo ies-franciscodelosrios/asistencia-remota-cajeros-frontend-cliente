@@ -24,15 +24,15 @@
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
         <div class="modal-header">
-          <h1 class="modal-title fs-5" id="rateModalLabel">Valora la llamada</h1>
+          <h1 class="modal-title fs-5" id="rateModalLabel">Valora tu experiencia con la llamada</h1>
           <img class="x" src="../assets/icons8-x-48.png" data-bs-dismiss="modal" alt="close">
         </div>
         <div class="modal-body d-flex flex-row justify-content-evenly">
-          <img src="../assets/icons8-star-16.png" class="star" id="star1" alt="star1" data-bs-dismiss="modal">
-          <img src="../assets/icons8-star-16.png" class="star" id="star2" alt="star2" data-bs-dismiss="modal">
-          <img src="../assets/icons8-star-16.png" class="star" id="star3" alt="star3" data-bs-dismiss="modal">
-          <img src="../assets/icons8-star-16.png" class="star" id="star4" alt="star4" data-bs-dismiss="modal">
-          <img src="../assets/icons8-star-16.png" class="star" id="star5" alt="star5" data-bs-dismiss="modal">
+          <img src="../assets/icons8-star-16.png" class="star" id="star1" alt="star1" (click)="sendRating(1)" data-bs-dismiss="modal">
+          <img src="../assets/icons8-star-16.png" class="star" id="star2" alt="star2" (click)="sendRating(2)" data-bs-dismiss="modal">
+          <img src="../assets/icons8-star-16.png" class="star" id="star3" alt="star3" (click)="sendRating(3)" data-bs-dismiss="modal">
+          <img src="../assets/icons8-star-16.png" class="star" id="star4" alt="star4" (click)="sendRating(4)" data-bs-dismiss="modal">
+          <img src="../assets/icons8-star-16.png" class="star" id="star5" alt="star5" (click)="sendRating(5)" data-bs-dismiss="modal">
         </div>
       </div>
     </div>
@@ -49,7 +49,7 @@
           <div class="d-flex flex-row align-items-center">
             <img src="../assets/icons8-clock.gif" width="32px" height="32px" alt="clock">
             <span class="mr15">Tiempo de espera estimado: </span>
-            <span>2:20 min</span>
+            <span #qeueTime id="qeueTime">2:20 min</span>
           </div>
           <div>
             <img src="../assets/icons8-person-32.png" alt="person">

@@ -6,6 +6,11 @@ import { Estado } from './model/call/Enum_call';
 import {  Observable, Subscription } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { Modal } from "bootstrap";
+import { CallBD } from './services/CallBD.service';
+import { Rating } from './model/call/Rating';
+import { Cajero } from './model/call/Cajero';
+import { ActivatedRoute, Route, Router } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
 
 
 declare var bootstrap:any;
@@ -19,23 +24,33 @@ export class AppComponent implements OnInit, OnDestroy {
   public isCallStarted: Observable<boolean>; //booleano que indica si se ha iniciado una llamada
   private peerId: string; //id que le pasa el cajero a la API para la llamada
   private subscriptionState:Subscription;
-  
+  private call:Call;
+  private ipAddress:any;
+  private queryParams: any;
+  private CajeroIp:Cajero = null;
   @ViewChild('localVideo') localVideo!: ElementRef<HTMLVideoElement>; //VideoLocal de la webcam
   @ViewChild('remoteVideo') remoteVideo!: ElementRef<HTMLVideoElement>; //Video remoto
   @ViewChild('iniciar') iniciar!: ElementRef<HTMLButtonElement>;
   @ViewChild('colgar') colgar!: ElementRef<HTMLButtonElement>;
   @ViewChild('staticBackdrop') modal!: any;
-  
+  @ViewChild('qeuePosition') qeuePosition!: ElementRef<HTMLSpanElement>;
+  @ViewChild('qeueTime') qeueTime!: ElementRef<HTMLSpanElement>;
 
   public state = 0;
 
-  constructor(public callService: CallService,private cdr:ChangeDetectorRef) {
+  constructor(private peticion:HttpClient,public callService: CallService,private callBDService:CallBD, private cdr:ChangeDetectorRef, private route:ActivatedRoute, private router:Router) {
   }
   
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
     //muestra loading
     try {
       this.peerId = this.callService.initPeer(); 
+      await this.peticion.get("http://api.ipify.org/?format=json").subscribe((res:any)=>{
+      this.ipAddress = res.ip;
+      const queryParams = { ip: this.ipAddress };
+      this.router.navigate([], { queryParams,  queryParamsHandling: 'merge' });
+      this.getIPAddress();
+    });
     } catch (error) {
       const peerToast = document.getElementById('peerToast');
         const toast = new bootstrap.Toast(peerToast);
@@ -49,23 +64,17 @@ export class AppComponent implements OnInit, OnDestroy {
       this.subscriptionState=this.callService.stateCalling$.subscribe(state=>{
         switch(state){
           case 0:
-            //document.getElementById("colgar")?.click();
             this.state=state;
-            console.log("ESTADO INICIAL");
-            //poner el botón rojo gordo
             break;
           case 1:
             this.state=state;
-            console.log("ESTADO LLAMANDO");
             this.openQeue();
-            //poner la animación verde y cancelar
             break;
           case 2:
             this.state=state;
-            console.log("EN LLAMADA")
-            //poner la llmada y el colgar
             break;
-          default: console.log("ESTADO DESCONOCIDO"); break;
+          default:
+            break;
         }
         this.cdr.detectChanges();
       })
@@ -113,12 +122,131 @@ export class AppComponent implements OnInit, OnDestroy {
 
   }
 
+  /**
+   * Hace una petición post a la API pasandole el id de la llamada y el propio id del cagero.
+   * Después ejecuta la función que inicia la llamada pero lo pone a la espera
+   */
+  public async startCall(): Promise<void> {
+
+    let DateTime = new Date();
+    const call:Call = {
+      id:0,
+      p2p:this.peerId,
+      estado:Estado.Calling,
+      date:DateTime,
+      cajeroId:+environment.id_cajero,
+      userId:null
+    }
+    this.call=call;
+    try{
+      this.callService.enableCallAnswer();
+    }catch(error){
+      const callToast = document.getElementById('callToast');
+      const toast = new bootstrap.Toast(callToast);
+      toast.show()
+      console.log(error)
+    }
+    try{
+      await this.callService.stablishCall(call);
+    } catch (error) {
+      const postToast = document.getElementById('postToast');
+      const toast = new bootstrap.Toast(postToast);
+      toast.show()
+      console.error(error);
+    }
+  }
+
+  /**
+   * Función para cancelar la llamada y dar una valoración a la experienca de la llamada
+   */
+  public async cancelCall(){
+    try{
+      await this.callService.cancelCall();
+    } catch (error) {
+      const endCallToast = document.getElementById('endCallToast');
+        const toast = new bootstrap.Toast(endCallToast);
+        toast.show()
+        console.log(error)
+    }
+  }
+
+  /**
+   * Metodo para terminar la llamada en la cual se abre primero el modal de rating para que el usuario valore la llamada
+   * y actualiza la llamada y por consiguiente cerramos los buffers de entrada y salida y termina la llamada.
+   */
+  public endCall() {
+    try{
+      this.openRate();
+      this.highlightStars();
+      this.callService.closeMediaCall();
+    } catch (error) {
+      const endCallToast = document.getElementById('endCallToast');
+        const toast = new bootstrap.Toast(endCallToast);
+        toast.show()
+        console.log(error)
+    }
+  }
+
+/**
+ * Función que abre un modal en el que se muestra el tiempo de espera medio y la posición en la cola
+ * La función GetDurationEstimated() nos deuelve un la duración estimada de la cola.
+ * Despues formateamos ese numero para que parezca un tiempo de minitos y segundos y lo asignamos a al span correspondiente.
+ * 
+ * Esta función tambíen setea en el span correspondiente el numero que estamos en la cola mediante el metodo GetQeueNumber().
+ */
   public openQeue(){
     const element = document.getElementById('queueModal') as HTMLElement;
     const myModal = new Modal(element);
+    this.callBDService.GetDurationEstimated().subscribe (
+      number => {
+            const minutos = Math.floor(number);
+            const segundos = Math.round((number - minutos) * 60);
+            const tiempoFormateado = `${minutos} minuto${minutos !== 1 ? 's' : ''} y ${segundos} segundo ${segundos !== 1 ? 's' : ''}`;
+            this.qeueTime.nativeElement.textContent=tiempoFormateado;
+      },
+      error => {
+        console.log(error);
+      }
+    )
+    this.callBDService.GetQueueNumber(this.call.id).subscribe(
+      number => {
+        this.qeuePosition.nativeElement.textContent=String(number);
+      },
+      error => {
+        console.log(error);
+      }
+   )
     myModal.show();
   }
 
+  /**
+   * Esta función simplemente abre el modal donde se muestran 5 estrellas para que el usuario valore la experiencia de la llamada
+   */
+  public openRate(){
+    const element = document.getElementById('rateModal') as HTMLElement;
+    const myModal = new Modal(element);
+    myModal.show()
+  }
+
+  /**
+   * Esta función asigna un rating del 1 al 5 a la llamada mediante unas estrellas que se muestran en el html.
+   * Después setea la llamada para actualizar los datos.
+   * @param rate rate es un numero que representa la valoración que le da a la llamada va desde el 1 hasta el 5
+   */
+  public sendRating(rate:number){
+    this.callBDService.getCall(this.call.id).subscribe(tempcall=>{
+      tempcall.rating=rate;
+      this.callBDService.UpdateRating(tempcall.id,tempcall,tempcall.userId);
+    });
+    
+  }
+
+  /**
+   * Función que le da formato a las estrellas que se muestra en el modal de Rating
+   * Cuando el raton para por encima de las estrellas lo que hace es darle unos estilos
+   * que en nuestro caso es background color, le aumenta la escala y le da un border-radious
+   * para destacar que estrellas a seleccionado y cuales no.
+   */
   public highlightStars(){
     // Obtener todas las imágenes de estrella
     const stars = document.querySelectorAll('.star');
@@ -152,67 +280,20 @@ export class AppComponent implements OnInit, OnDestroy {
     });
   }
 
-  public openRate(){
-    const element = document.getElementById('rateModal') as HTMLElement;
-    const myModal = new Modal(element);
-    myModal.show();
-  }
-
-  /**
-   * Hace una petición post a la API pasandole el id de la llamada y el propio id del cagero.
-   * Después ejecuta la función que inicia la llamada pero lo pone a la espera
+   /**
+   * Función que coge la ip del cajero de los parametros de la url cambia hace una peticion
+   * para cager el cajero por ip y cambia el id del cajero del enviroment de la aplicación
    */
-  public async startCall(): Promise<void> {
-
-    let DateTime = new Date();
-    const call:Call = {
-      id:0,
-      p2p:this.peerId,
-      estado:Estado.Calling,
-      date:DateTime,
-      CajeroId:+environment.id_cajero,
-      UserId:null
-    }
-    try{
-      this.callService.enableCallAnswer();
-    }catch(error){
-      const callToast = document.getElementById('callToast');
-      const toast = new bootstrap.Toast(callToast);
-      toast.show()
-      console.log(error)
-    }
-    try{
-      await this.callService.stablishCall(call);
-    } catch (error) {
-      const postToast = document.getElementById('postToast');
-      const toast = new bootstrap.Toast(postToast);
-      toast.show()
-      console.error(error);
-    }
-  }
-
-  public async cancelCall(){
-    try{
-      await this.callService.cancelCall();
-      this.openRate();
-      this.highlightStars();
-    } catch (error) {
-      const endCallToast = document.getElementById('endCallToast');
-        const toast = new bootstrap.Toast(endCallToast);
-        toast.show()
-        console.log(error)
-    }
-  }
-
-  //metodo para terminar la llamada
-  public endCall() {
-    try{
-      this.callService.closeMediaCall();
-    } catch (error) {
-      const endCallToast = document.getElementById('endCallToast');
-        const toast = new bootstrap.Toast(endCallToast);
-        toast.show()
-        console.log(error)
-    }
+  public getIPAddress() {
+    this.route.queryParams
+      .subscribe(params => {
+        this.ipAddress = params['ip'];
+        this.callBDService.getCashierByIp(this.ipAddress).subscribe(
+          data => {
+            this.CajeroIp = data;
+            environment.id_cajero = this.CajeroIp.id;
+          }
+        )
+      })
   }
 }

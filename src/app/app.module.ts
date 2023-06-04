@@ -13,12 +13,10 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { HttpClientModule } from "@angular/common/http";
 import { CallService } from './services/call.service';
 import { ClipboardModule } from '@angular/cdk/clipboard';
-import { ColaComponent } from './cola/cola.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    ColaComponent
   ],
   imports: [
     BrowserModule,
