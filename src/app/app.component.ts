@@ -7,7 +7,6 @@ import {  Observable, Subscription } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { Modal } from "bootstrap";
 import { CallBD } from './services/CallBD.service';
-import { Rating } from './model/call/Rating';
 import { Cajero } from './model/call/Cajero';
 import { ActivatedRoute, Route, Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
@@ -26,7 +25,6 @@ export class AppComponent implements OnInit, OnDestroy {
   private subscriptionState:Subscription;
   private call:Call;
   private ipAddress:any;
-  private queryParams: any;
   private CajeroIp:Cajero = null;
   @ViewChild('localVideo') localVideo!: ElementRef<HTMLVideoElement>; //VideoLocal de la webcam
   @ViewChild('remoteVideo') remoteVideo!: ElementRef<HTMLVideoElement>; //Video remoto
